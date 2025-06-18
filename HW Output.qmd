@@ -78,4 +78,102 @@ task1_answer_list <- list(t1_q1, t1_q2, t1_q3, t1_q4, t1_q5)
 
 ```
 
+## Task 2: Writing R Functions
+
+### Question 1: Create a function to calculate root mean square error
+
+```{r}
+#function to getRMSE - first input will be response, 2nd will be predictions, and add
+#elipses 
+getRMSE <- function(resp, pred, ...) {
+#start by getting the squared error
+  sq_error <- (resp - pred)^2
+#take mean of squared error, then the square root
+#add ... to allow for additional arguments
+  rmse <- sqrt(mean(sq_error, ...))
+#return the root mean square error
+  return(rmse)
+}
+```
+
+### Question 2: Testing our function to get the Root Mean Square Error
+
+Let's create some response and predicted values
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+getRMSE(resp, pred)
+```
+
+Now will replace 2 response values with missing
+
+```{r}
+resp[c(5, 9)] <- NA_real_
+```
+
+Let's use my function without specifying how to handle missing values
+
+```{r}
+getRMSE(resp, pred)
+```
+
+Let's retest the function specifying how to handle missing values
+
+```{r}
+getRMSE(resp, pred, na.rm=T)
+```
+
+### Question 3: Now let's create a function to calculate the mean absolute deviation. 
+
+```{r}
+#function to get the Mean absolute deviation - first input will be response, 
+#2nd will be predictions, and add elipses 
+getMAE <- function(resp, pred, ...) {
+#take the mean of the absolute value of response minus predicted
+  mean_abs_dev <- mean(abs((resp - pred)),...)
+
+#return the mean absolute deviation
+  return(mean_abs_dev)
+}
+```
+
+### Question 4: Testing our function to get the Mean Absolute Deviation
+
+Let's create some response and predicted values
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+getMAE(resp, pred)
+```
+
+Now will replace 2 response values with missing
+
+```{r}
+resp[c(12, 33)] <- NA_real_
+```
+
+Let's use my function without specifying how to handle missing values
+
+```{r}
+getMAE(resp, pred)
+```
+
+Let's retest the function specifying how to handle missing values
+
+```{r}
+getMAE(resp, pred, na.rm=T)
+```
+
+### Question 5: Create a rapper function to return both the Root Mean Square Error and Mean Absolute Deviation with a single call
+
 
