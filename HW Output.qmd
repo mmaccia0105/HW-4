@@ -11,8 +11,6 @@ editor: visual
 
 # Load in necessary packages
 suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(knitr))
-suppressPackageStartupMessages(library(kableExtra))
 
 ```
 
@@ -128,7 +126,7 @@ Let's retest the function specifying how to handle missing values
 getRMSE(resp, pred, na.rm=T)
 ```
 
-### Question 3: Now let's create a function to calculate the mean absolute deviation. 
+### Question 3: Now let's create a function to calculate the mean absolute deviation.
 
 ```{r}
 #function to get the Mean absolute deviation - first input will be response, 
@@ -242,6 +240,7 @@ Now let's call both metrics
 ```{r}
 pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
 ```
+
 Now we are going to change 2 response values to missing
 
 ```{r}
@@ -253,9 +252,11 @@ We will test using the original function, followed by testing indicating to remo
 ```{r}
 pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
 ```
+
 ```{r}
 pred_wrapper(resp,pred, metrics = c("rmse", "mae"), na.rm=TRUE)
 ```
+
 Now, let's create a data frame. We will then test what happens when that is input into the function
 
 ```{r}
@@ -269,3 +270,4 @@ test_df <- data.frame(
 pred_wrapper(test_df,pred, metrics = c("rmse", "mae"))
 ```
 
+## Task 3: Querying an API and a Tidy-Style Function
