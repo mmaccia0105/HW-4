@@ -174,6 +174,98 @@ Let's retest the function specifying how to handle missing values
 getMAE(resp, pred, na.rm=T)
 ```
 
-### Question 5: Create a rapper function to return both the Root Mean Square Error and Mean Absolute Deviation with a single call
+### Question 5: Create a wrapper function to return both the Root Mean Square Error and Mean Absolute Deviation with a single call
 
+```{r}
+pred_wrapper <- function(resp, pred, metrics = c("rmse", "mae"), ...) {
+
+#first, need to check if input is a vector, atomic, and numeric
+#will do first for resp input, then for pred input
+
+  if (!(is.vector(resp) && is.atomic(resp) && is.numeric(resp))) {
+    message("Error: 'resp' input must be a numeric atomic vector")
+    return(NULL)
+  }
+  
+  if (!(is.vector(pred) && is.atomic(pred) && is.numeric(pred))) {
+    message("Error: 'pred' input must be a numeric atomic vector")
+    return(NULL)
+  }
+  #create a list to store the results
+    
+  results <- list()
+  
+  #Use root mean square function
+  if ("rmse" %in% metrics) {
+    results[["Root Mean Square Error"]] <- getRMSE(resp, pred, ...)
+  }
+  
+  #use mean absolute deviation function
+  if ("mae" %in% metrics){
+    results[["Mean Absolute Deviation"]] <- getMAE(resp, pred, ...)
+  }
+  
+  #return the list of results
+  return(results)
+  
+}
+```
+
+### Question 6: Testing the Wrapper Function
+
+Let's create some response and predicted values
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+
+Let's test the wrapper function first by calling each metric by themselves
+
+First will be for Root Mean Square Error
+
+```{r}
+pred_wrapper(resp,pred, metrics = "rmse")
+```
+
+Next we will call for Mean Absolute Deviation
+
+```{r}
+pred_wrapper(resp,pred, metrics = "mae")
+```
+
+Now let's call both metrics
+
+```{r}
+pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
+```
+Now we are going to change 2 response values to missing
+
+```{r}
+resp[c(1, 82)] <- NA_real_
+```
+
+We will test using the original function, followed by testing indicating to remove missing values
+
+```{r}
+pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
+```
+```{r}
+pred_wrapper(resp,pred, metrics = c("rmse", "mae"), na.rm=TRUE)
+```
+Now, let's create a data frame. We will then test what happens when that is input into the function
+
+```{r}
+test_df <- data.frame(
+  letters = 1:6, 
+  age = sample(18:45, 6)
+)
+```
+
+```{r}
+pred_wrapper(test_df,pred, metrics = c("rmse", "mae"))
+```
 
