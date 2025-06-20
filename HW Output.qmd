@@ -11,7 +11,8 @@ editor: visual
 
 # Load in necessary packages
 suppressPackageStartupMessages(library(tidyverse))
-
+suppressPackageStartupMessages(library(httr))
+suppressPackageStartupMessages(library(jsonlite))
 ```
 
 ## Task 1: Conceptual Questions
@@ -271,3 +272,46 @@ pred_wrapper(test_df,pred, metrics = c("rmse", "mae"))
 ```
 
 ## Task 3: Querying an API and a Tidy-Style Function
+
+For this task we will connect to an API from [News API](https://newsapi.org/).
+
+### Question 1: Use the `GET()` function from the `httr` package to return an interesting topic. Let's get top headlines for recent sports events
+
+```{r}
+URL_sports_headlines <- "https://newsapi.org/v2/everything?q=Yankees&source=us&apiKey=e09f041046584e7c85072592a8add194"
+
+id_sports_headlines <- httr::GET(URL_sports_headlines)
+```
+
+### Question 2: Now let's parse what was returned and find the data frame with article information
+
+```{r}
+#Look at structure of data
+str(id_sports_headlines, max.level = 1)
+```
+Next, parse the data using `jsonlite` package
+
+```{r}
+parsed_sports_headlines <- fromJSON(rawToChar(id_sports_headlines$content))
+sports_headlines <- as_tibble(parsed_sports_headlines)
+sports_headlines$articles
+```
+
+### Question 3: Building a function to search the API
+
+```{r}
+build_newsapi_url <- function(title_subject, time_period_from, time_period_to, API_key) {
+  
+  base_url <- "https://newsapi.org/v2/everything?"
+  
+  #need to figure out how to get date to yyyymmdd format
+  
+ 
+  
+  #construct the full url
+  url <- paste0(base_url, endpoint)
+  
+  
+}
+```
+
