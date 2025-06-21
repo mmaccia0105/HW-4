@@ -300,7 +300,7 @@ sports_headlines$articles
 ### Question 3: Building a function to search the API
 
 ```{r}
-build_newsapi_url <- function(subject, start_date, end_date, api_key) {
+build_newsapi_url <- function(subject, start_date, api_key) {
   #base url from website
   base_url <- "https://newsapi.org/v2/everything?"
   
@@ -311,24 +311,28 @@ build_newsapi_url <- function(subject, start_date, end_date, api_key) {
   if (!is_valid_date(start_date)){
     stop("start_date must be in 'yyyy-mm-dd' format")
   }
-   if (!is_valid_date(end_date)){
-    stop("end_date must be in 'yyyy-mm-dd' format")
-  }
+   
    
   #construct the full url
   url <- paste0(base_url, 
                 "q=", subject,
                 "&from=", start_date,
-                "&to=", end_date,
                 "&apikey=", api_key)
   
-  return(url)
+  #now call the api
+  topic_search <- httr::GET(url)
+  
+  #take the data using `fromJSON` to make readable
+  parsed_topic_search <- fromJSON(rawToChar(topic_search$content))
+  #make the results a tibble
+  search_results <- as_tibble(parsed_topic_search)
+  #call the article df from the previous tibble
+  search_results$articles
 }
 ```
 
 ```{r}
-build_newsapi_url("sports", "2025-06-12", "2025-06-15", "e09f041046584e7c85072592a8add194")
+build_newsapi_url("gamestop", "2025-06-12", "e09f041046584e7c85072592a8add194")
 
-url
 ```
 
