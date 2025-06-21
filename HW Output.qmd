@@ -300,18 +300,35 @@ sports_headlines$articles
 ### Question 3: Building a function to search the API
 
 ```{r}
-build_newsapi_url <- function(title_subject, time_period_from, time_period_to, API_key) {
-  
+build_newsapi_url <- function(subject, start_date, end_date, api_key) {
+  #base url from website
   base_url <- "https://newsapi.org/v2/everything?"
   
-  #need to figure out how to get date to yyyymmdd format
-  
- 
-  
+  #checking date format is correct - just make a simple stop if incorrect format
+ is_valid_date <- function (dates){
+   grepl("^\\d{4}-\\d{2}-\\d{2}$", dates)
+ }
+  if (!is_valid_date(start_date)){
+    stop("start_date must be in 'yyyy-mm-dd' format")
+  }
+   if (!is_valid_date(end_date)){
+    stop("end_date must be in 'yyyy-mm-dd' format")
+  }
+   
   #construct the full url
-  url <- paste0(base_url, endpoint)
+  url <- paste0(base_url, 
+                "q=", subject,
+                "&from=", start_date,
+                "&to=", end_date,
+                "&apikey=", api_key)
   
-  
+  return(url)
 }
+```
+
+```{r}
+build_newsapi_url("sports", "2025-06-12", "2025-06-15", "e09f041046584e7c85072592a8add194")
+
+url
 ```
 
