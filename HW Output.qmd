@@ -299,12 +299,18 @@ sports_headlines$articles
 
 ### Question 3: Building a function to search the API
 
+This function will take some inputs in order to build the URL to search from the api on [News API](https://newsapi.org/). The inputs will be the subject to search for, the date to search from (should be in YYYY-MM-DD format, will search to present), followed by the API key.
+
+The function will then output a data frame with the article information.
+
+We are going to test by searching for "gamestop" from May 19, 2025 to present.
+
 ```{r}
 build_newsapi_url <- function(subject, start_date, api_key) {
   #base url from website
   base_url <- "https://newsapi.org/v2/everything?"
   
-  #checking date format is correct - just make a simple stop if incorrect format
+  #checking date format is correct - make a stop if incorrect format
  is_valid_date <- function (dates){
    grepl("^\\d{4}-\\d{2}-\\d{2}$", dates)
  }
