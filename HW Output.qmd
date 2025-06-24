@@ -80,19 +80,7 @@ for (i in 1:5) {
 #elipses for additional arguments
 getRMSE <- function(resp, pred, ...) {
   
-  #first, need to check if input is a vector, atomic, and numeric
-#will do first for resp input, then for pred input
-
-  if (!(is.vector(resp) && is.atomic(resp) && is.numeric(resp))) {
-    message("Error: 'resp' input must be a numeric atomic vector")
-    return(NULL)
-  }
-  
-  if (!(is.vector(pred) && is.atomic(pred) && is.numeric(pred))) {
-    message("Error: 'pred' input must be a numeric atomic vector")
-    return(NULL)
-  }
-#start by getting the squared error
+ #start by getting the squared error
   sq_error <- (resp - pred)^2
 #take mean of squared error, then the square root
 #add ... to allow for additional arguments
@@ -140,19 +128,7 @@ getRMSE(resp, pred, na.rm=T)
 #function to get the Mean absolute deviation - first input will be response, 
 #2nd will be predictions, and add elipses for additional arguments 
 getMAE <- function(resp, pred, ...) {
-  
-  #first, need to check if input is a vector, atomic, and numeric
-#will do first for resp input, then for pred input
 
-  if (!(is.vector(resp) && is.atomic(resp) && is.numeric(resp))) {
-    message("Error: 'resp' input must be a numeric atomic vector")
-    return(NULL)
-  }
-  
-  if (!(is.vector(pred) && is.atomic(pred) && is.numeric(pred))) {
-    message("Error: 'pred' input must be a numeric atomic vector")
-    return(NULL)
-  }
 #take the mean of the absolute value of response minus predicted
   mean_abs_dev <- mean(abs((resp - pred)),...)
 
