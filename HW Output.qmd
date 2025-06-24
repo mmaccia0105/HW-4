@@ -19,7 +19,6 @@ suppressPackageStartupMessages(library(jsonlite))
 
 ### Answering Question prompts in the form of a list
 
-
 ```{r}
 t1_q1 <- "What is the purpose of the `lapply()` function? What is the equivalent 
 `purrr` function?"
@@ -32,15 +31,7 @@ t1_q2 <- "Suppose we have a list called `my_list`. Each element of the list is a
 numeric data frame (all columns are numeric). We want to use `lapply()` to run the code 
 `cor(numeric_matrix, method = 'kendall')` on each element of the list. Write code to do
 this below!"
-t1_a2 <- "#make a numeric list
-
-df_1 <- data.frame(a = 1:5, b = 11:15)
-df_2 <- data.frame (c = rnorm(5), d = rnorm(5))
-df_3 <- data.frame(e = rnorm(4), f = c(2, 5, 22, 23))
-
-my_list <- list(df_1, df_2, df_3)
-
-t1_q2 <- lapply(my_list, FUN = cor, method = 'kendall')"
+t1_a2 <- "`answer <- lapply(my_list, FUN = cor, method = 'kendall')`"
 t1_q3 <- "What are two advantages of using `purrr` functions instead of the `BaseR` 
 apply family?"
 t1_a3 <- "One advantage of `purrr` over the apply family is that it provides a 
@@ -50,7 +41,7 @@ shorthand to make anonymous functions."
 t1_q4 <- "What is a side-effect function?"
 t1_a4 <- "Side-effect functions are functions that produce something but do not 
 change the data. Some examples of side-effect functions include `print()`, 
-`write_csv()`, or `plot()`"
+`write_csv()`, or `plot()`."
 t1_q5 <- "Why can you name a variable `sd` in a function and not cause any issues 
 with the `sd` function?"
 t1_a5 <- "You can name a variable `sd` within a function and not cause any issues 
@@ -88,6 +79,19 @@ for (i in 1:5) {
 #function to getRMSE - first input will be response, 2nd will be predictions, and add
 #elipses for additional arguments
 getRMSE <- function(resp, pred, ...) {
+  
+  #first, need to check if input is a vector, atomic, and numeric
+#will do first for resp input, then for pred input
+
+  if (!(is.vector(resp) && is.atomic(resp) && is.numeric(resp))) {
+    message("Error: 'resp' input must be a numeric atomic vector")
+    return(NULL)
+  }
+  
+  if (!(is.vector(pred) && is.atomic(pred) && is.numeric(pred))) {
+    message("Error: 'pred' input must be a numeric atomic vector")
+    return(NULL)
+  }
 #start by getting the squared error
   sq_error <- (resp - pred)^2
 #take mean of squared error, then the square root
@@ -100,7 +104,7 @@ getRMSE <- function(resp, pred, ...) {
 
 ### Question 2: Testing our function to get the Root Mean Square Error
 
-Let's create some response and predicted values
+Let's create some response and predicted values. We will use this data to test the Root Mean Square function (`getRMSE`):
 
 ```{r}
 set.seed(10)
@@ -112,19 +116,19 @@ pred <- predict(lm(resp ~ x), data.frame(x))
 getRMSE(resp, pred)
 ```
 
-Now will replace 2 response values with missing
+Now will replace 2 response values with missing:
 
 ```{r}
 resp[c(5, 9)] <- NA_real_
 ```
 
-Let's use my function without specifying how to handle missing values
+Let's use my function without specifying how to handle missing values:
 
 ```{r}
 getRMSE(resp, pred)
 ```
 
-Let's retest the function specifying how to handle missing values
+Let's retest the function specifying how to handle missing values. Since `...` were added to the function input, we can add the additional argument to indicate how we want missing values to be handled. This will allow us to get a numeric response:
 
 ```{r}
 getRMSE(resp, pred, na.rm=T)
@@ -136,6 +140,19 @@ getRMSE(resp, pred, na.rm=T)
 #function to get the Mean absolute deviation - first input will be response, 
 #2nd will be predictions, and add elipses for additional arguments 
 getMAE <- function(resp, pred, ...) {
+  
+  #first, need to check if input is a vector, atomic, and numeric
+#will do first for resp input, then for pred input
+
+  if (!(is.vector(resp) && is.atomic(resp) && is.numeric(resp))) {
+    message("Error: 'resp' input must be a numeric atomic vector")
+    return(NULL)
+  }
+  
+  if (!(is.vector(pred) && is.atomic(pred) && is.numeric(pred))) {
+    message("Error: 'pred' input must be a numeric atomic vector")
+    return(NULL)
+  }
 #take the mean of the absolute value of response minus predicted
   mean_abs_dev <- mean(abs((resp - pred)),...)
 
@@ -146,7 +163,7 @@ getMAE <- function(resp, pred, ...) {
 
 ### Question 4: Testing our function to get the Mean Absolute Deviation
 
-Let's create some response and predicted values
+Let's create some response and predicted values. We will use these values to test the Mean Absolute Deviation function (`getMAE`):
 
 ```{r}
 set.seed(10)
@@ -158,25 +175,27 @@ pred <- predict(lm(resp ~ x), data.frame(x))
 getMAE(resp, pred)
 ```
 
-Now will replace 2 response values with missing
+Now will replace 2 response values with missing:
 
 ```{r}
 resp[c(12, 33)] <- NA_real_
 ```
 
-Let's use my function without specifying how to handle missing values
+Let's use my function without specifying how to handle missing values:
 
 ```{r}
 getMAE(resp, pred)
 ```
 
-Let's retest the function specifying how to handle missing values
+Let's retest the function specifying how to handle missing values. Since `...` were added to the function input, we can add the additional argument to indicate how we want missing values to be handled. This will allow us to get a numeric response:
 
 ```{r}
 getMAE(resp, pred, na.rm=T)
 ```
 
 ### Question 5: Create a wrapper function to return both the Root Mean Square Error and Mean Absolute Deviation with a single call
+
+First, we will create the function. It will utilize the previously created functions `getRMSE` and `getMAE`:
 
 ```{r}
 pred_wrapper <- function(resp, pred, metrics = c("rmse", "mae"), ...) {
@@ -215,7 +234,7 @@ pred_wrapper <- function(resp, pred, metrics = c("rmse", "mae"), ...) {
 
 ### Question 6: Testing the Wrapper Function
 
-Let's create some response and predicted values
+Let's create some response and predicted values:
 
 ```{r}
 set.seed(10)
@@ -225,33 +244,33 @@ resp <- 3 + 10*x + rnorm(n)
 pred <- predict(lm(resp ~ x), data.frame(x))
 ```
 
-Let's test the wrapper function first by calling each metric by themselves
+Let's test the wrapper function first by calling each metric by themselves.
 
-First will be for Root Mean Square Error
+First will be for Root Mean Square Error:
 
 ```{r}
 pred_wrapper(resp,pred, metrics = "rmse")
 ```
 
-Next we will call for Mean Absolute Deviation
+Next we will call for Mean Absolute Deviation:
 
 ```{r}
 pred_wrapper(resp,pred, metrics = "mae")
 ```
 
-Now let's call both metrics
+Now let's call both metrics:
 
 ```{r}
 pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
 ```
 
-Now we are going to change 2 response values to missing
+Now we are going to change 2 response values to missing:
 
 ```{r}
 resp[c(1, 82)] <- NA_real_
 ```
 
-We will test using the original function, followed by testing indicating to remove missing values
+We will test using the original function, followed by testing indicating to remove missing values. Since `...` were added to the function input, we can add the additional argument to indicate how we want missing values to be handled. This will allow us to get a numeric response:
 
 ```{r}
 pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
@@ -261,7 +280,7 @@ pred_wrapper(resp,pred, metrics = c("rmse", "mae"))
 pred_wrapper(resp,pred, metrics = c("rmse", "mae"), na.rm=TRUE)
 ```
 
-Now, let's create a data frame. We will then test what happens when that is input into the function
+Now, let's create a data frame. Parts of 1 of the data frames will contain non-numeric data. We will then test what happens when that is input into the function:
 
 ```{r}
 test_df <- data.frame(
@@ -278,12 +297,16 @@ pred_wrapper(test_df,pred, metrics = c("rmse", "mae"))
 
 For this task we will connect to an API from [News API](https://newsapi.org/).
 
-### Question 1: Use the `GET()` function from the `httr` package to return an interesting topic. Let's get top headlines for recent sports events
+### Question 1: Use the `GET()` function from the `httr` package to return an interesting topic. 
+
+Let's get top headlines for recent events related to the Yankees from US sources. To minimize results, we will look at June 20,  2025 to present: 
 
 ```{r}
-URL_sports_headlines <- "https://newsapi.org/v2/everything?q=Yankees&source=us&apiKey=e09f041046584e7c85072592a8add194"
 
-id_sports_headlines <- httr::GET(URL_sports_headlines)
+URL_sports_headlines <- paste0("https://newsapi.org/v2/everything?q=Yankees&source=us&",
+                        "from=2025-06-20&apiKey=e09f041046584e7c85072592a8add194")
+
+id_sports_headlines <- GET(URL_sports_headlines)
 ```
 
 ### Question 2: Now let's parse what was returned and find the data frame with article information
@@ -332,7 +355,7 @@ build_newsapi_url <- function(subject, start_date, api_key) {
                 "&apikey=", api_key)
   
   #now call the api
-  topic_search <- httr::GET(url)
+  topic_search <- GET(url)
   
   #take the data using `fromJSON` to make readable
   parsed_topic_search <- fromJSON(rawToChar(topic_search$content))
@@ -343,9 +366,9 @@ build_newsapi_url <- function(subject, start_date, api_key) {
 }
 ```
 
-We are going to test by searching for "gamestop" from May 19, 2025 to present.
+We are going to test by searching for "gamestop" from June 22, 2025 to present.
 
 ```{r}
-build_newsapi_url("gamestop", "2025-06-12", "e09f041046584e7c85072592a8add194")
+build_newsapi_url("gamestop", "2025-06-22", "e09f041046584e7c85072592a8add194")
 
 ```
